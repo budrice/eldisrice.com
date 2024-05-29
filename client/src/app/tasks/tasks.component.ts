@@ -1,22 +1,34 @@
 import { Component, Input } from '@angular/core';
-import { TaskComponent } from "./task/task.component";
-import { DUMMY_TASKS } from '../dummy-tasks';
+import { TaskComponent } from './task/task.component';
+import { NewTaskComponent } from './new-task/new-task.component';
+import { TasksService } from './tasks.service';
+import { NewTask } from './task.model';
 
 @Component({
-    selector: 'app-tasks',
-    standalone: true,
-    templateUrl: './tasks.component.html',
-    styleUrl: './tasks.component.css',
-    imports: [TaskComponent]
+  selector: 'app-tasks',
+  standalone: true,
+  templateUrl: './tasks.component.html',
+  styleUrl: './tasks.component.css',
+  imports: [TaskComponent, NewTaskComponent],
 })
 export class TasksComponent {
-  @Input({ alias: 'username', required: true }) name!: string;
-  @Input({ alias: 'userid', required: true }) id!: string;
+  constructor(private tasksService: TasksService) {}
 
-  tasks = DUMMY_TASKS;
+  @Input({ alias: 'username', required: true }) name!: string;
+  @Input({ alias: 'userid', required: true }) uid!: string;
+
+  isStartNewTask = false;
 
   get selectedTasks() {
-    return this.tasks.filter(task => task.userId === this.id);
+    return this.tasksService.getUserTasks(this.uid);
+  }
+
+  onStartNewTask() {
+    this.isStartNewTask = true;
+  }
+
+  onEndNewTask() {
+    this.isStartNewTask = false;
   }
 
 }
